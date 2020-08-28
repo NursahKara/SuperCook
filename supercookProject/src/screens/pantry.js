@@ -3,50 +3,48 @@ import * as React from 'react';
 import { View, Text, Button ,SafeAreaView,TouchableOpacity,ImageBackground,StyleSheet,Dimensions,ScrollView,Image} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import {SearchBox} from '../components/searchbox';
+import CustomHeader from './CustomHeader';
 const { width, height } = Dimensions.get("screen");
 export default class PantryScreen extends React.Component{
     render(){
         return(
-          <ImageBackground
+        <ImageBackground
           source={require('../../assest/themes/redbg.jpeg')}
           style={styles.ImageContainer}
           >
           <SafeAreaView style={{ flex: 1}}>
             <ScrollView>
-              <View style={{flexDirection:'row',marginLeft:23}}>
-              <View style={{alignItems:'flex-start',justifyContent:'center',marginTop:'12%',flex:1}}>
-                  <Icon name="user-circle" size={25} color="white" />
+              <View style={{flexDirection:'row',marginLeft:5}}>
+                <View style={{justifyContent:'center',marginTop:'11%'}}>
+                  <CustomHeader  navigation={this.props.navigation}/>
                 </View>
                 <View style={{justifyContent:'center',alignItems:'center',marginTop:'12%',flex:4}}>
                   <Text style={styles.textStyle}>Malzemeler</Text>
                 </View>
-                <TouchableOpacity style={{alignItems:'flex-end',justifyContent:'center',marginTop:'12%',flex:1,marginRight:23}}>
-                <Image source={require('../../assest/images/moree.png')} style={styles.imageView} />
-                </TouchableOpacity>
+                <View style={{alignItems:'flex-start',justifyContent:'center',marginTop:'12%',flex:1}}>
+                  <Icon name="user-circle" size={25} color="white" />
+                </View>
               </View>
               <View style={styles.Search}>
                 <SearchBox inputPlaceHolder='Ekle/Çıkar...'/>   
               </View>
               <View style={styles.body}>
-              <View style={{marginLeft:23,marginTop:20,marginRight:23,marginBottom:20,height:110}}>
-                   <TouchableOpacity style={styles.smallCardDesign}>
-                      <View style={{justifyContent: 'center',alignItems:'center', marginBottom: 5, marginTop: 5 }}>
-                        <Text style={styles.title1Style}>Sesli Arama Yap!</Text>
-                      </View>  
-                      <View style={{justifyContent:'center',alignItems:'center'}}>
+                <View style={{marginLeft:23,marginTop:20,marginRight:23,marginBottom:20,height:110}}>
+                  <TouchableOpacity style={styles.smallCardDesign}>
+                    <View style={{justifyContent: 'center',alignItems:'center', marginBottom: 5, marginTop: 5 }}>
+                      <Text style={styles.title1Style}>Sesli Arama Yap!</Text>
+                    </View>  
+                    <View style={{justifyContent:'center',alignItems:'center'}}>
                       <View style={{  justifyContent: 'center', alignItems:'center',padding: 3,borderRadius:100,backgroundColor:'#E57373',height:60,width:60 }}>
                         <Image source={require('../../assest/images/mic-w.png')} style={styles.imageView} />
                       </View>
-                      </View>    
-                     
-                 
-                    </TouchableOpacity>
+                    </View>    
+                  </TouchableOpacity>
                 </View>
-
               </View>
            </ScrollView>  
-           </SafeAreaView>
-          </ImageBackground>
+          </SafeAreaView>
+        </ImageBackground>
         );
     }
 }

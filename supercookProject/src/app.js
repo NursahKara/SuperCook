@@ -1,32 +1,67 @@
 import * as React from 'react';
-import { Text, View,Image } from 'react-native';
+import { Text, View,Image,SafeAreaView,ScrollView,TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import MenuScreen from './screens/menu';
 import FavoritesScreen from './screens/favorites';
 import ShoppingListScreen from './screens/shoppingList';
 import PantryScreen from './screens/pantry';
-function HomeScreen() {
+import BarcodeScannerScreen from './screens/borcodeScanner';
+import Icon from 'react-native-vector-icons/FontAwesome';
+function CustomDrawerContent(props) {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home!</Text>
-    </View>
-  );
+    <SafeAreaView style={{ flex: 1 }}>
+      <ScrollView style={{ marginLeft: 25, marginTop: '5%' }}>
+        <View style={{ marginBottom: 10, flex: 3 }}>
+          <TouchableOpacity style={{ marginTop: 20, flexDirection: 'row' }} onPress={() => props.navigation.navigate('Menu')}>
+            <View style={{ flex: 1 }}>
+              <Image  source={require('../assest/images/home-blue.png')} style={{ width:25,height:25}}/>
+            </View>
+            <View style={{ flex: 5 }}>
+              <Text style={{ fontSize: 16, marginLeft: 15 }}>Ana Sayfa</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <View style={{ marginBottom: 10, flex: 3 }}>
+          <TouchableOpacity style={{ marginTop: 20, flexDirection: 'row' }} onPress={() => props.navigation.navigate('BarcodeScannerScreen')}>
+            <View style={{ flex: 1 }}>
+            <Image  source={require('../assest/images/qr-code.png')} style={{ width:25,height:25}}/>
+            </View>
+            <View style={{ flex: 5 }}>
+              <Text style={{ fontSize: 16, marginLeft: 15 }}>Barkod Okut</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  )
 }
-
-function SettingsScreen() {
+const StackMenu = createStackNavigator();
+function MenuStack() {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Settings!</Text>
-    </View>
-  );
+    <StackMenu.Navigator initialRouteName="Menu">
+      <StackMenu.Screen name="Menu" component={MenuScreen} options={navOptionHandler} />
+      <StackMenu.Screen name="BarcodeScannerScreen" component={BarcodeScannerScreen} options={navOptionHandler} />
+    </StackMenu.Navigator>
+  )
 }
-
+const StackBarcode = createStackNavigator();
+function BarcodeStack() {
+  return (
+    <StackBarcode.Navigator initialRouteName="BarcodeScannerScreen">
+      <StackBarcode.Screen name="BarcodeScannerScreen" component={BarcodeScannerScreen} options={navOptionHandler} />
+    </StackBarcode.Navigator>
+  )
+}
 const Tab = createBottomTabNavigator();
+const navOptionHandler = () => ({
+  headerShown: false
+})
 
-export default function App() {
+function TabNavigator() {
   return (
-    <NavigationContainer>
       <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
@@ -73,6 +108,26 @@ export default function App() {
       <Tab.Screen name="Favoriler" component={FavoritesScreen} />
       <Tab.Screen name="Alışveriş Listesi" component={ShoppingListScreen} />
     </Tab.Navigator>
+  );
+}
+
+const Drawer = createDrawerNavigator();
+function DrawerNavigator(
+) {
+  return (
+    <Drawer.Navigator initialRouteName="Menu" drawerContent={props => CustomDrawerContent(props)}>
+      <Drawer.Screen name="Menu" component={TabNavigator} />
+      <Drawer.Screen name="BarcodeScannerScreen" component={BarcodeStack} />
+    </Drawer.Navigator>
+  )
+}
+const StackApp = createStackNavigator();
+export default function App() {
+  return (
+    <NavigationContainer>
+      <StackApp.Navigator initialRouteName="HomeApp">
+        <StackApp.Screen name="HomeApp" component={DrawerNavigator} options={navOptionHandler} />
+      </StackApp.Navigator>
     </NavigationContainer>
   );
 }

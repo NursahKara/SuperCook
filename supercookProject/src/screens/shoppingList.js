@@ -3,6 +3,7 @@ import * as React from 'react';
 import { View, Text, Button ,SafeAreaView,TouchableOpacity,TextInput,ImageBackground,Image,StyleSheet,Dimensions,ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import {SearchBox} from '../components/searchbox';
+import CustomHeader from './CustomHeader';
 const { width, height } = Dimensions.get("screen");
 export default class ShoppingListScreen extends React.Component{
     render(){
@@ -13,17 +14,18 @@ export default class ShoppingListScreen extends React.Component{
           >
           <SafeAreaView style={{ flex: 1}}>
             <ScrollView>
-              <View style={{flexDirection:'row',marginLeft:23}}>
-                <View style={{alignItems:'flex-start',justifyContent:'center',marginTop:'12%',flex:1}}>
-                  <Icon name="user-circle" size={25} color="white" />
-                </View>
+            <View style={{flexDirection:'row',marginLeft:5}}>
+              <View style={{justifyContent:'center',marginTop:'11%'}}>
+              <CustomHeader  navigation={this.props.navigation}/>
+              </View>
+                
                 <View style={{justifyContent:'center',alignItems:'center',marginTop:'12%',flex:4}}>
                   <Text style={styles.textStyle}>Alışveriş Listesi</Text>
                 </View>
-                <TouchableOpacity style={{alignItems:'flex-end',justifyContent:'center',marginTop:'12%',flex:1,marginRight:23}}>
-                <Image source={require('../../assest/images/moree.png')} style={styles.imageView} />
-
-                </TouchableOpacity>
+                <View style={{alignItems:'flex-start',justifyContent:'center',marginTop:'12%',flex:1}}>
+                  <Icon name="user-circle" size={25} color="white" />
+                </View>
+                 
               </View>
               <View style={styles.Search}>
               <SearchBox inputPlaceHolder='Ekle...'/> 
