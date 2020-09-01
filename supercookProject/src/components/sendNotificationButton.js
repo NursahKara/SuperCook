@@ -4,7 +4,7 @@ import signalr from 'react-native-signalr';
 import PushNotification from 'react-native-push-notification';
 import BackgroundTask from 'react-native-background-task';
 
-const connection = signalr.hubConnection('http://192.168.1.100/NotificationWebService');
+const connection = signalr.hubConnection('http://192.168.43.250/NotificationWebService');
 connection.logging = true;
 const notificationHub = connection.createHubProxy('notificationHub');
 notificationHub.on("ReceiveNotification", function (notification) {
