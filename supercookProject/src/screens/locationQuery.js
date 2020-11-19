@@ -7,14 +7,14 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import { Actions } from 'react-native-router-flux';
 import { ScrollView } from 'react-native-gesture-handler';
 const { width, height } = Dimensions.get('window');
-export default class EmptyLocationScreen extends Component {
+export default class LocationQueryScreen extends Component {
   constructor(props) {
 
     super(props);
     console.log('1111111111', this.props.token)
     this.state = {
       modalVisible: false,
-      code: '',
+      locationNo: '',
       isLoading: true,
       data: [],
       tok: '',
@@ -24,14 +24,15 @@ export default class EmptyLocationScreen extends Component {
   };
 
   ifScaned = e => {
-    this.setState({ code: e, isLoading: false })
+    console.log('eeeeeeeeeeeeee',e)
+    this.setState({ locationNo: e, isLoading: false })
     this.setState({ modalVisible: false })
     this.getData(e);
   }
-  getData = (barcode) => {
+  getData = (locationNo) => {
 
     console.log("tokeeeeeeeeeeennnnnnnnnnn::::::::::::", this.props.token);
-    fetch('http://192.168.41.182/IfsTerminalService/Data/InventoryPartByBarcodeId/' + barcode, {
+    fetch('http://192.168.43.210/IfsTerminalService/Data/LocationQuery/84' , {
       method: 'GET',
       headers: new Headers({
         'Authorization': 'Bearer' + ' ' + this.props.token,
@@ -55,8 +56,6 @@ export default class EmptyLocationScreen extends Component {
         this.setState({
           isLoading: false,
           data: responsejson,
-          partNo:responsejson[0].partNo,
-          oldNo:responsejson[0].oldNo
         })
        
       })
@@ -117,7 +116,7 @@ export default class EmptyLocationScreen extends Component {
  
               <TextInput
                 onChangeText={this.ifScaned.bind(this)}
-                value={this.state.code}
+                value={this.state.locationNo}
                 borderBottomColor="black"
                 autoFocus={true}
                 placeholder="Barkodu Girin..."
@@ -135,7 +134,7 @@ export default class EmptyLocationScreen extends Component {
                   color:'yellow'
                 }}>Barkodu Okutun...</Text>
                 <Button
-                onPress={() => { this.setState({ modalVisible: true,code:'' }) }}
+                onPress={() => { this.setState({ modalVisible: true,locationNo:'' }) }}
                 style={{
                   width: 120, height: 120, backgroundColor: '#FAFAFA', alignItems: 'center', justifyContent: 'center', shadowColor: "#000",
                   shadowOffset: {
@@ -161,14 +160,9 @@ export default class EmptyLocationScreen extends Component {
                 
             </Button>
             </View>
-            <View style={{flexDirection:'row'}}>
-            <Text style={{marginTop:20, marginBottom:20,marginLeft:10}}>PART NO : </Text><Text style={{fontWeight:'bold',marginTop:20, marginBottom:20,}}> {this.state.partNo}</Text>
-            </View>
-            <View style={{flexDirection:'row'}}>
-            <Text style={{ marginBottom:20,marginLeft:10}}>ESKİ KOD : </Text><Text style={{fontWeight:'bold', marginBottom:20,}}> {this.state.oldNo}</Text>
-            </View>
-            <View style={{ marginBottom: 0,marginLeft:5}}>
-            <ScrollView style={{height:height-350,marginBottom:40}}>
+            
+            <View style={{ marginBottom: 0,marginLeft:5,marginTop:30}}>
+            <ScrollView style={{height:height-290,marginBottom:20}}>
               <ScrollView
               horizontal
               >
@@ -197,37 +191,12 @@ export default class EmptyLocationScreen extends Component {
                   </View>
                   
                 </View>
-                {/* <View>
-                <View style={{flexDirection:'row'}}>
-                <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View>
-                    <Text style={{ fontSize: 16,paddingLeft:5,marginRight:5 }}>PART NO:  </Text>
-                
-                </View>
-                <View style={{ height: 0.5,backgroundColor: "#000",marginTop: 3,marginBottom: 3}}></View>
-               <View style={{flexDirection:'row'}}>
-                  <FlatList
-                    style={{ marginBottom: 20,marginRight:5,paddingLeft:5 }}
-                    data={data}
-                    keyExtractor={(id) => id}
-                    pagingEnabled={true}
-                    renderItem={({ item }) => (
-                    
-                      <View>
-                        
-                      <Text style={{ fontSize: 12 }}>{item.partNo}</Text>
-
-    
-                      </View>
-                    )}
-                  />
-                  <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View>
-               </View>
-                </View> */}
+  
          
                 <View>
                 <View style={{flexDirection:'row'}}>
                 <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View>
-                    <Text style={{ fontSize: 16,paddingLeft:5,marginRight:5 }}>AMBAR:  </Text>
+                    <Text style={{ fontSize: 16,paddingLeft:5,marginRight:5 }}>LOKASYON NO:  </Text>
                 
                 </View>
                 <View style={{ height: 0.5,backgroundColor: "#000",marginTop: 3,marginBottom: 3}}></View>
@@ -240,7 +209,7 @@ export default class EmptyLocationScreen extends Component {
                 renderItem={({ item }) => (
                  
                   <View>
-                  <Text style={{ fontSize: 12 }}>{item.warehouse}</Text>
+                  <Text style={{ fontSize: 12 }}>{item.locationNo}</Text>
  
                   </View>
                 )}
@@ -252,7 +221,7 @@ export default class EmptyLocationScreen extends Component {
                 <View>
                 <View style={{flexDirection:'row'}}>
                 <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View>
-                    <Text style={{ fontSize: 16,paddingLeft:5,marginRight:5 }}>LOKASYON NO:  </Text>
+                    <Text style={{ fontSize: 16,paddingLeft:5,marginRight:5 }}>PART NO:  </Text>
                  
                 </View>
                 <View style={{ height: 0.5,backgroundColor: "#000",marginTop: 3,marginBottom: 3}}></View>
@@ -265,7 +234,7 @@ export default class EmptyLocationScreen extends Component {
                   renderItem={({ item }) => (
                   
                     <View>
-                    <Text style={{ fontSize: 12 }}>{item.locationNo}</Text>
+                    <Text style={{ fontSize: 12 }}>{item.partNo}</Text>
   
                     </View>
                   )}
@@ -347,7 +316,7 @@ export default class EmptyLocationScreen extends Component {
                 </View>
                 
 
-                {/* <View>
+                 <View>
                   <View style={{flexDirection:'row'}}>
                   <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View>
                     <Text style={{ fontSize: 16,paddingLeft:5,marginRight:5 }}>ESKİ KODU:  </Text>
@@ -368,7 +337,7 @@ export default class EmptyLocationScreen extends Component {
                 />
                   <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View>
                   </View>
-                </View> */}
+                </View> 
               </ScrollView>
               </ScrollView>
 

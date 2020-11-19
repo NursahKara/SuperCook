@@ -11,6 +11,9 @@ target 'supercookProject' do
   pod 'react-native-camera', :path => '../node_modules/react-native-camera'
 
 
+
+  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
+
   target 'supercookProjectTests' do
     inherit! :complete
     # Pods for testing

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, Modal, Linking, FlatList, Image, ActivityIndicator, ImageBackground, Dimensions, ART } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, TouchableOpacity, Modal, Linking, FlatList, Image, ActivityIndicator, ImageBackground, Dimensions } from 'react-native';
 import CustomHeader from './CustomHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { Button, TextInput } from 'react-native-paper';
@@ -7,31 +7,29 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import { Actions } from 'react-native-router-flux';
 import { ScrollView } from 'react-native-gesture-handler';
 const { width, height } = Dimensions.get('window');
-export default class EmptyLocationScreen extends Component {
+export default class StockQueryScreen extends Component {
   constructor(props) {
 
     super(props);
     console.log('1111111111', this.props.token)
     this.state = {
       modalVisible: false,
-      warehouse: '',
+      code: '',
       isLoading: true,
       data: [],
       tok: '',
-      partNo:'',
-      oldNo:''
     }
   };
 
   ifScaned = e => {
-    this.setState({ warehouse: e, isLoading: false })
+    this.setState({ code: e, isLoading: false })
     this.setState({ modalVisible: false })
     this.getData(e);
   }
-  getData = (warehouse) => {
+  getData = (barcode) => {
 
     console.log("tokeeeeeeeeeeennnnnnnnnnn::::::::::::", this.props.token);
-    fetch('http://192.168.41.182/IfsTerminalService/Data/EmptyLocationsByWarehouse/' + warehouse, {
+    fetch('http://192.168.41.182/IfsTerminalService/Data/InventoryPartByBarcodeId/' + barcode, {
       method: 'GET',
       headers: new Headers({
         'Authorization': 'Bearer' + ' ' + this.props.token,
@@ -40,24 +38,15 @@ export default class EmptyLocationScreen extends Component {
       .then((response) => response.json()
 
       )
+      //  .then(data => console.log(data[0].contract))
 
       .then((responsejson) => {
-        if(responsejson==""){
-          alert("Veri Yok!");
-          this.setState({
-            isLoading: false,
-            data: ""
-          })
-        }
         this.setState({
           isLoading: false,
           data: responsejson,
-          partNo:responsejson[0].partNo,
-          oldNo:responsejson[0].oldNo
         })
-       
       })
-      // .catch((error) => alert(error));
+      .catch((error) => console.error(error));
     console.log('::::::::::::::', this.state.data)
    
   }
@@ -111,10 +100,26 @@ export default class EmptyLocationScreen extends Component {
               <View style={{ flex: 1 }}></View>
             </View>
             <View style={{ marginTop: '50%', justifyContent: 'center' }}>
- 
+              {/* <QRCodeScanner
+                containerStyle={{backgroundColor:'#fff'}}
+                onRead={this.ifScaned.bind(this)}
+                reactivate={true}
+                style={{flex:1,marginTop:'auto'}}
+                cameraProps={{ratio:'16:9'}}
+                permissionDialogMessage="Need Permission To Access Camera"
+                reactivateTimeout={10}
+                showMarker={true}
+                markerStyle={{borderColor:'#fff',borderRadius:10}}
+                bottomContent={
+                <TouchableOpacity> 
+                    <Text style={{fontSize:21,color:'rgb(0,122,255)'}}>Scan</Text>
+                </TouchableOpacity>
+                }
+                />  */}
+
               <TextInput
                 onChangeText={this.ifScaned.bind(this)}
-                value={this.state.warehouse}
+                value={this.state.code}
                 borderBottomColor="black"
                 autoFocus={true}
                 placeholder="Barkodu Girin..."
@@ -124,14 +129,15 @@ export default class EmptyLocationScreen extends Component {
             </View>
 
           </Modal>
-          <CustomHeader isHome={false} title="Lokasyon Sorgulama" />
+          <CustomHeader isHome={false} title="Stok Görüntüleme" />
           <View style={{ height: 'auto', marginBottom: 'auto' }}>
-            <View style={{ alignItems:'center', marginTop: 5, marginBottom: 20 }}>
+            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 5, marginBottom: 20 }}>
+              {/* <TouchableOpacity onPress={()=>{this.setState({modalVisible:true})}} ><Text>tıkla</Text></TouchableOpacity> */}
               <Text style={{
                   color:'yellow'
                 }}>Barkodu Okutun...</Text>
-                <Button
-                onPress={() => { this.setState({ modalVisible: true ,warehouse:''}) }}
+              <Button
+                onPress={() => { this.setState({ modalVisible: true }) }}
                 style={{
                   width: 120, height: 120, backgroundColor: '#FAFAFA', alignItems: 'center', justifyContent: 'center', shadowColor: "#000",
                   shadowOffset: {
@@ -141,7 +147,6 @@ export default class EmptyLocationScreen extends Component {
                   shadowOpacity: 1,
                   shadowRadius: 3.84,
                   elevation: 10,
-                  paddingLeft:15
                 }}
                 icon={({ size, color, direction }) => (
                   <Image
@@ -150,7 +155,6 @@ export default class EmptyLocationScreen extends Component {
                       {
                         width: 45,
                         height: 45,
-                        
                       }
                     ]}
                   />
@@ -158,95 +162,71 @@ export default class EmptyLocationScreen extends Component {
                 
             </Button>
             </View>
-           
-            <View style={{marginTop:20,marginLeft:5}}>
-            <ScrollView style={{height:height-350,marginBottom:40}}>
-              <ScrollView
-              horizontal
-              >
-                
-                {/* <View>
-                <View style={{flexDirection:'row'}}>
-               
-                    <Text style={{ fontSize: 16,paddingLeft:5,marginRight:5 }}>SİTE:  </Text>
-                  </View>
-                  <View style={{ height: 0.5,backgroundColor: "#000",marginTop: 3,marginBottom: 3}}></View>
-                  <View style={{flexDirection:'row'}}>
-                    <FlatList
-                    style={{ marginRight:5,paddingLeft:5}}
-                    data={data}
-                    keyExtractor={(id) => id}
-                    pagingEnabled={true}
-                    renderItem={({ item }) => (
-                    
-                      <View>
-                      <Text style={{ fontSize: 12, }}>{item.contract}</Text>
-                      </View>
-                    )}
-                    />
-                    <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View>
-                    
-                  </View>
-                  
-                </View> */}
-         
-                <View>
-                <View style={{flexDirection:'row'}}>
-                {/* <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View> */}
-                    <Text style={{ fontSize: 16,paddingLeft:5,marginRight:5 }}>LOKASYON NO:  </Text>
-                
-                </View>
-                <View style={{ height: 0.5,backgroundColor: "#000",marginTop: 3,marginBottom: 3}}></View>
-                <View style={{flexDirection:'row'}}>
-                <FlatList
-                style={{ marginRight:5,paddingLeft:5}}
+            <View style={{ marginBottom: 0, height: height - 220 }}>
+              {/* {this.state.isLoading ? */}
+              <FlatList
+                style={{ marginBottom: 20, height: 'auto' }}
                 data={data}
                 keyExtractor={(id) => id}
-                pagingEnabled={true}
                 renderItem={({ item }) => (
-                 
-                  <View>
-                  <Text style={{ fontSize: 12 }}>{item.locationNo}</Text>
- 
+                  <View style={styles.card}>
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-start', flex: 5 }}>SİTE:</Text>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-end', flex: 7 }}>{item.contract}</Text>
+                    </View>
+
+                    <View style={styles.seperator} />
+
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-start', flex: 5 }}>PART NO:</Text>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-end', flex: 7 }}>{item.partNo}</Text>
+                    </View>
+
+                    <View style={styles.seperator} />
+
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-start', flex: 5 }}>AMBAR:</Text>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-end', flex: 7 }}>{item.warehouse}</Text>
+                    </View>
+
+                    <View style={styles.seperator} />
+
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-start', flex: 5 }}>LOKASYON NO:</Text>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-end', flex: 7 }}>{item.locationNo}</Text>
+                    </View>
+
+                    <View style={styles.seperator} />
+
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-start', flex: 5 }}>LOT NO:</Text>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-end', flex: 7 }}>{item.lotBatchNo}</Text>
+                    </View>
+
+                    <View style={styles.seperator} />
+
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-start', flex: 5 }}>MİKTAR:</Text>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-end', flex: 7 }}>{item.qtyOnHand}</Text>
+                    </View>
+
+                    <View style={styles.seperator} />
+
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-start', flex: 5 }}>SON KULLANMA TARİHİ:</Text>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-end', flex: 7 }}>{item.expirationDate}</Text>
+                    </View>
+
+                    <View style={styles.seperator} />
+
+                    <View style={{ flex: 1, flexDirection: 'row' }}>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-start', flex: 5 }}>ESKİ KODU:</Text>
+                      <Text style={{ fontSize: 12, alignItems: 'flex-end', flex: 7 }}>{item.oldNo}</Text>
+                    </View>
                   </View>
                 )}
               />
-               <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View>
-               </View>
-                </View>
-
-                <View>
-                <View style={{flexDirection:'row'}}>
-                <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View>
-                    <Text style={{ fontSize: 16,paddingLeft:5,marginRight:5 }}>LOKASYON NAME:  </Text>
-                 
-                </View>
-                <View style={{ height: 0.5,backgroundColor: "#000",marginTop: 3,marginBottom: 3}}></View>
-                <View style={{flexDirection:'row'}}>
-                  <FlatList
-                  style={{ marginRight:5,paddingLeft:5}}
-                  data={data}
-                  keyExtractor={(id) => id}
-                  pagingEnabled={true}
-                  renderItem={({ item }) => (
-                  
-                    <View>
-                    <Text style={{ fontSize: 12 }}>{item.locationName}</Text>
-  
-                    </View>
-                  )}
-                />
-                  <View style={{borderLeftWidth:0.5,height:'auto',color:'#DCDCDC'}}></View>
-                  </View>
-                </View>
- 
-
-  
-
-              </ScrollView>
-              </ScrollView>
-
-            
+              {/* :<ActivityIndicator size="small" color="#731873" style={{ marginTop: 200 }} />} */}
             </View>
           </View>
         </ImageBackground>
@@ -281,14 +261,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#DCDCDC",
     marginTop: 3,
     marginBottom: 3
-  },
-  vl :{
-    borderLeftColor:'black',
-    height: 500,
-    position:"absolute",
-    left: '50%',
-    marginLeft: -3,
-    top: 0,
-
   }
 });

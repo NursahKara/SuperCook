@@ -8,22 +8,18 @@ import {
   TextInput,
   Animated,
   Dimensions,
-  TouchableOpacity,
-  ActivityIndicator,
-  Button
+  TouchableOpacity
 } from "react-native";
-import { Actions } from 'react-native-router-flux';
 import { TypingAnimation } from 'react-native-typing-animation';
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import * as Animatable from 'react-native-animatable';
-const {  height } = Dimensions.get('window');
-export default class LoginScreen extends React.Component{
+
+export default class App extends React.Component{
   constructor(props){
     super(props);
     this.state={
       typing_email: false,
       typing_password: false,
-      typing_service:false,
       animation_login : new Animated.Value(width-40),
       enable:true,
       username: '',
@@ -32,10 +28,6 @@ export default class LoginScreen extends React.Component{
       dataSuccess: false,
       token: '',
       isLoading: false,
-      name:'',
-      service:'',
-      serv:''
-      
     }
   }
 
@@ -43,22 +35,13 @@ export default class LoginScreen extends React.Component{
     if(value=="email"){
       this.setState({
         typing_email: true,
-        typing_password: false,
-        typing_service:false
-      })
-    }
-    else if(value=="service"){
-      this.setState({
-        typing_email: false,
-        typing_password: false,
-        typing_service:true
+        typing_password: false
       })
     }
     else{
       this.setState({
         typing_email: false,
-        typing_password: true,
-        typing_service:false
+        typing_password: true
       })
     }
   }
@@ -80,26 +63,21 @@ export default class LoginScreen extends React.Component{
         duration: 250
       }
     ).start();
-    // startsWith((str,word)=>{
-    //   if(this.state.service.startsWith("http://"))
-    //   {
 
-    //     this.setState({})
-    //   }
-    // })
     setTimeout(() => {
       this.setState({
         enable:false,
         typing_email: false,
-        typing_password: false,
-        typing_service:false
+        typing_password: false
       })
     }, 150);
   }
   onLoginBtnPress = () => {
-    this.setState({ isLoading: true });
-    // http://192.168.41.182/IfsTerminalService/Token/Login
-    fetch(this.state.service+'/IfsTerminalService/Token/Login', {
+    const data = new URLSearchParams();
+    data.append("Username", "IFSAPP");
+    data.append("Password", "ifsapp");
+    
+    fetch('http://192.168.41.182/IfsTerminalService/Token/Login', {
       method: 'POST',
       headers: {
         'Content-Type' : 'application/x-www-form-urlencoded'
@@ -110,29 +88,43 @@ export default class LoginScreen extends React.Component{
     })
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log('responseJson',responseJson);
-
-        this.setState({ token: responseJson.token, name:responseJson.username });
-        
-        console.log('state.token:::::',this.state.token);
-        const { token,name } = this.state;
-        console.log('token:::::',token);
-        Actions.homee({ token: token, username:name });
-        
+        console.log(responseJson);
+        this.setState({ token: responseJson.token });
+        console.log(this.state.token);
       })
-    .catch((error) => console.error(error)).finally(()=>{
-      this.setState({ isLoading: false });
-    });
-  
+    // .catch((error) => console.error(error));
+    const { token } = this.state;
+    if (token === "") {
+      console.log("Token boş:::", token)
+      console.log("username:", this.state.username)
+      console.log("pass:", this.state.password)
+    }
+    else if (token === undefined) {
+      console.log("Token undefined:::", token)
+      {
+        alert("Kullanıcı doğrulanamadı");
+      }
+    }
+    else if (token === null) {
+      console.log("Token null:::", token)
+      {
+        alert("Kullanıcı doğrulanamadı");
+      }
+    }
+    else {
+      console.log("Token dolu:::", token)
+      this.setState({ isLoading: true });
+      Actions.homee({ token: token });
+    
+    }
   }
- 
   render(){
     const width = this.state.animation_login;
     let { isLoading } = this.state;
     if (isLoading) {
       return (
         <View style={{ marginTop: height / 2.25 }}>
-          <ActivityIndicator size="large" animating color="#872990" />
+          <ActivityIndicator size="large" animating color="black" />
         </View>
       )
     }
@@ -158,7 +150,7 @@ export default class LoginScreen extends React.Component{
           </View>
           <View style={styles.footer}>
                 <Text style={[styles.title,{
-                  marginTop:20
+                  marginTop:50
                 }]}>Kullanıcı Adı</Text>
                 <View style={styles.action}>
                     <TextInput 
@@ -191,29 +183,15 @@ export default class LoginScreen extends React.Component{
                       this._typing()
                     : null}
                 </View>
-                <Text style={[styles.title,{
-                  marginTop:20
-                }]}>Servis Url</Text>
-                <View style={styles.action}>
-                    <TextInput 
-                      placeholder="Servis Url.."
-                      style={styles.textInput}
-                      onFocus={()=>this._foucus("service")}
-                      onChangeText={valuee =>
-                        this.setState({ service: valuee })
-                      }
-                    />
-                    {this.state.typing_service ?
-                      this._typing()
-                    : null}
-                </View>
+                
                 <TouchableOpacity
-                onPress={()=>this._animation()}>
+                  onPress={this.onLoginBtnPress.bind(this)}>
                   <View style={styles.button_container}>
-                        <Animated.View style={[styles.animation,{ paddingLeft:10,paddingRight:10
+                        <Animated.View style={[styles.animation,{
+                          width
                         }]}>
                           {this.state.enable ?
-                            <Text style={{fontSize:12,color:'white'}}>Test Et</Text>
+                            <Text style={styles.textLogin}>Giriş</Text>
                             :
                             <Animatable.View
                             animation="bounceIn"
@@ -227,35 +205,6 @@ export default class LoginScreen extends React.Component{
                           }
                         </Animated.View >
                   </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={{  backgroundColor:'#93278f',
-                                  paddingVertical:10,
-                                  marginTop:15,
-                                  borderRadius:100,
-                                  justifyContent:'center',
-                                  alignItems:'center'}}
-                                  onPress={this.onLoginBtnPress.bind(this)}>
-                  <View style={{justifyContent:'center',alignItems:'center'}}>
-                        {/* <Animated.View style={[styles.animation,{
-                          width
-                        }]}>
-                          {this.state.enable ? */}
-                            <Text style={styles.textLogin}>Giriş</Text>
-                            {/* :
-                            <Animatable.View
-                            animation="bounceIn"
-                            delay={50}>
-                              <FontAwesome 
-                                name="check"
-                                color="white"
-                                size={20}
-                              />
-                            </Animatable.View>
-                          }
-                        </Animated.View > */}
-                  </View>
-                  {/* <Text style={{color:'white',fontSize:20,fontWeight:'bold'}}>Giriş</Text> */}
                 </TouchableOpacity>
 
               
@@ -304,15 +253,14 @@ var styles = StyleSheet.create({
     color:'gray'
   },
   button_container: {
-    alignItems: 'flex-end',
-    justifyContent:'center',
-    marginTop:-20
+    alignItems: 'center',
+    justifyContent:'center'
   },
   animation: {
     backgroundColor:'#93278f',
-    paddingVertical:5,
+    paddingVertical:10,
     marginTop:30,
-    borderRadius:20,
+    borderRadius:100,
     justifyContent:'center',
     alignItems:'center'
   },

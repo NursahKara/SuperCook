@@ -1,8 +1,11 @@
-import * as React from 'react';
+import  React, {Component} from 'react';
 import { Text, View,Image,SafeAreaView,ScrollView,TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from '../screens/home';
+import Home from './homee';
+import { Actions } from 'react-native-router-flux';
 function SettingsScreen() {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -10,12 +13,30 @@ function SettingsScreen() {
     </View>
   );
 }
+const navOptionHandler = () => ({
+  headerShown: false
+})
+const StackHome = createStackNavigator();
 
 const Tab = createBottomTabNavigator();
 
-export default function App() {
+const StackApp = createStackNavigator();
+export default class App extends Component {
+  constructor(props) {
+    super(props);
+    console.log('tabmenu::::::::', this.props.token)
+  
+}
+ HomeStack() {
   return (
-    <NavigationContainer>
+    <StackHome.Navigator initialRouteName="Home">
+      <StackHome.Screen name="Home" component={HomeScreen} options={navOptionHandler}  />
+    </StackHome.Navigator>
+  )
+}
+  render(){
+    return (
+      <NavigationContainer>
       <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
@@ -48,9 +69,10 @@ export default function App() {
           paddingBottom: 5,
         }
       }}>
-        <Tab.Screen name="Anasayfa" component={HomeScreen} />
-        <Tab.Screen name="Profil" component={SettingsScreen} />
+        <Tab.Screen name="Anasayfa" component={this.HomeStack} />
       </Tab.Navigator>
     </NavigationContainer>
-  );
+    );
+  }
+ 
 }

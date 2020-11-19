@@ -51,7 +51,7 @@ const StackBarcode = createStackNavigator();
 function BarcodeStack() {
   return (
     <StackBarcode.Navigator initialRouteName="BarcodeScannerScreen">
-      <StackBarcode.Screen name="BarcodeScannerScreen" component={BarcodeScannerScreen} options={navOptionHandler} />
+      <StackBarcode.Screen name="BarcodeScannerScreen" component={BarcodeScannerScreen} options={navOptionHandler}/>
     </StackBarcode.Navigator>
   )
 }

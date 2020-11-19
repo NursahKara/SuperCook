@@ -9,12 +9,12 @@ export default class CustomHeader extends Component {
         flexDirection: 'row', height: 60, borderBottomWidth: 0.2, shadowColor: "#000",
         shadowOffset: {
           width: 0,
-          height: 5,
+          height: 0,
         },
-        shadowOpacity: 0.13,
+        shadowOpacity: 0,
         shadowRadius: 15,
-        elevation: 3,
-        backgroundColor:'#8b3d8d'
+        elevation: 1,
+        backgroundColor:this.props.color
       }}>
         <View style={{ flex: 1, justifyContent: 'center' }}>
           {
@@ -32,7 +32,7 @@ export default class CustomHeader extends Component {
                 <Icon
                   name='chevron-left'
                   color="white"
-                  size={15}
+                  size={20}
                   style={{marginLeft: 10}}
               />
               </TouchableOpacity>
@@ -44,9 +44,6 @@ export default class CustomHeader extends Component {
                 {this.props.title}
               </Text>
         </View>
-        {/* <View style={{ flex: 1, justifyContent: 'center'}}>
-        {/* <Image source={require('../images/logo.jpg')} style={{width:80,height:80}}/> 
-        </View> */}
         <View style={{ flex: 1 }}></View>
       </View>
     )

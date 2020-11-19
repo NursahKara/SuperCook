@@ -8,7 +8,10 @@ import StockQueryScreen from './screens/stockQuery';
 import EmptyLocationScreen from './screens/emptyLocation';
 import EmptyProductScreen from './screens/emptyProduct';
 import HomeScreen from './screens/home';
+import Home from './screens/homee';
 import TabMenu from './screens/tabMenu';
+import LocationOrProductScreen from './screens/locationOrProduct';
+import LocationQueryScreen from './screens/locationQuery';
 
 
 const RouterComp = () => {
@@ -54,10 +57,31 @@ const RouterComp = () => {
                         hideNavBar={true}
                     />
                       <Scene key='home'
+                        component={TabMenu}
+                        title='Anasayfa'
+                        animation='fade'
+                        hideNavBar={true}
+                    />
+                      <Scene key='homee'
                         component={HomeScreen}
                         title='Anasayfa'
                         animation='fade'
                         hideNavBar={true}
+                        
+                    />
+                     <Scene key='locOrPro'
+                        component={LocationOrProductScreen}
+                        title='Anasayfa'
+                        animation='fade'
+                        hideNavBar={true}
+                        
+                    />
+                     <Scene key='locationQuery'
+                        component={LocationQueryScreen}
+                        title='Anasayfa'
+                        animation='fade'
+                        hideNavBar={true}
+                        
                     />
                 </Scene>
             </Scene>
